@@ -1,0 +1,270 @@
+/* styles.css */
+@import url('https://fonts.googleapis.com/css2?family=Junge&family=Jost:wght@400;500&display=swap');
+
+/* Base Styles */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #F8EFE5;
+  min-height: 100vh;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+/* Header Styles */
+header.header {
+  background: #5D768B;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+header.header h1 {
+  color: #F8EFE5;
+  margin: 0;
+  font-weight: 100;
+  letter-spacing: 2px;
+  text-align: center;
+}
+nav.navbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem;
+}
+
+nav.navbar ul.nav-list {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
+}
+
+nav.navbar ul.nav-list li a {
+  text-decoration: none;
+  color: #F8EFE5;
+  font-weight: 100;
+  letter-spacing: 2px;
+}
+
+footer.footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: #5D768B;
+  margin-top: 2rem;
+  color: #F8EFE5;
+  font-weight: 100;
+  letter-spacing: 2px;
+}
+/* Main Content Layout */
+.main-container {
+  display: flex;
+  flex: 1;
+  padding: 1rem;
+  gap: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Filters Panel */
+.filters-panel {
+  width: 300px;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+  position: sticky;
+  top: 80px;
+}
+
+.filters-panel h2 {
+  color: #5D768B;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 1.2rem;
+}
+
+/* Map Container */
+.map-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#map {
+  height: calc(95vh - 200px);
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Loading Indicator */
+#loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px 40px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  font-size: 1.1rem;
+  color: #5D768B;
+}
+
+/* Filter Controls (will be added by condo.js) */
+.filter-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.filter-section h3 {
+  margin: 0 0 10px 0;
+  font-size: 0.9rem;
+  color: #5D768B;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-section label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #5D768B;
+  font-weight: 500;
+}
+
+.filter-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.filter-button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 1rem;
+  background-color: #5D768B;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.filter-button:hover {
+  background-color: #3F5A75;
+}
+
+.gm-style .gm-style-iw-d {
+  overflow: hidden !important;
+}
+
+.gm-style .gm-style-iw-c {
+    width: 283px !important;
+    height: auto !important;
+    min-height: 200px !important;
+    flex-shrink: 0 !important;
+    background: rgba(54, 54, 71, 0.95) !important; /* #363647 with 95% opacity */
+    border: 3px solid #3F2EBB !important;
+    border-radius: 8px !important;
+    opacity: 0.9 !important;
+    padding: 16px !important; 
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    overflow: hidden !important;
+  }
+
+.gm-style .gm-style-iw-t::after {
+  background: #F8F5F0 !important;
+  box-shadow: -2px 2px 2px 0 rgba(0, 0, 0, 0.1) !important;
+  border: none !important;
+}
+
+
+.info-window-title {
+  color: #BDA7FF !important;
+  font-family: 'Junge', serif;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 20px;;
+  padding: 0;
+  text-align: center;
+  letter-spacing: 1.2px;
+}
+.info-window-content h3{
+  width: 100%;
+  color: #FFF;
+  font-family: 'Junge', serif;
+  font-size: 36px;
+  padding: 5px 0;
+  margin: 0;
+}
+
+.info-window-content p{
+  width: 100%;
+  color: #FFF;
+  font-family: 'Jost', sans-serif;
+  font-size: 18px;
+  margin: 0;
+  padding-top: 25px;
+  letter-spacing: 1.7px;
+}
+/* .info-window-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #5D768B; 
+  margin: 0 0 8px 0;
+  border-bottom: 1px solid #E0D7CC;
+  padding-bottom: 8px;
+} */
+
+
+/* .info-window-value {
+  color: #7A6B5D;
+}
+
+.info-window-divider {
+  border-top: 1px solid #E0D7CC;
+  margin: 12px 0;
+} */
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main-container {
+    flex-direction: column;
+    padding: 1rem;
+  }
+  
+  .filters-panel {
+    width: 100%;
+    position: static;
+    margin-bottom: 1rem;
+  }
+  
+  #map {
+    height: 70vh;
+  }
+}

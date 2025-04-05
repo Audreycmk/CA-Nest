@@ -1,0 +1,29 @@
+extends layout.pug
+
+block scripts
+  script.
+    function loadGoogleMaps() {
+      if (!googleMapsApiKey) {
+        console.error("Google Maps API key is missing");
+        document.getElementById('loading').textContent = "Map configuration error";
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&callback=initMap&libraries=places&loading=async`;
+      script.async = true;
+      script.defer = true;
+      script.onerror = () => {
+        document.getElementById('loading').textContent = "Failed to load Google Maps";
+      };
+      document.head.appendChild(script);
+    }
+    window.addEventListener('DOMContentLoaded', loadGoogleMaps);
+
+block content
+  .main-container
+    .filters-panel
+      h2 FILTER PROPERTIES
+    .map-container
+      #map
+      #loading Loading map...

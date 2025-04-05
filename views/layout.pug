@@ -1,0 +1,23 @@
+doctype html
+html
+  head
+    title Zillow Condo Map
+    link(rel="stylesheet", href="/styles.css")
+    script(src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js")
+    script.
+      const googleMapsApiKey = "#{googleMapsApiKey}";
+
+      function initMap() {
+        console.log("Google Maps API is ready");
+      }
+    script(src="/js/condo.js" defer)
+
+    block scripts  
+
+  body
+    include partials/header.pug
+
+    main
+      block content
+
+    include partials/footer.pug
