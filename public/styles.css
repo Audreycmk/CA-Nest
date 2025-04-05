@@ -6,7 +6,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', system-ui, sans-serif;
-  background: #F8EFE5;
+  background: #f5e3d5;
   min-height: 100vh;
   display: flex;
   overflow: hidden;
@@ -50,6 +50,11 @@ nav.navbar ul.nav-list li a {
   font-weight: 100;
   letter-spacing: 2px;
 }
+nav.navbar ul.nav-list li a:hover {
+  color: #b8ab9c;
+  transform: translateY(1px);
+  border-bottom: solid 1px #b8ab9c;
+}
 
 footer.footer {
   text-align: center;
@@ -80,20 +85,28 @@ footer.footer {
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   height: fit-content;
+  height: 80%;
   position: sticky;
   top: 80px;
 }
 
 .filters-panel h2 {
-  color: #5D768B;
-  margin-top: 0;
-  margin-bottom: 1.5rem;
+  margin: 12px 0 50px 0;
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 1px;
-  font-size: 1.2rem;
+  font-size: 22px;
+  font-family: 'Junge', serif;
+  color: #5D768B;;
 }
+h4 {
 
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1.3px;
+}
 /* Map Container */
 .map-container {
   flex: 1;
@@ -124,56 +137,407 @@ footer.footer {
 }
 
 /* Filter Controls (will be added by condo.js) */
+
+
 .filter-section {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #eee;
+  margin-bottom: 25px;
 }
 
-.filter-section h3 {
-  margin: 0 0 10px 0;
-  font-size: 0.9rem;
-  color: #5D768B;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+/* Price Range Slider */
+.price-range-container {
+  margin-top: 15px;
 }
 
-.filter-section label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  color: #5D768B;
-  font-weight: 500;
+.price-slider-wrapper {
+  position: relative;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  margin: 30px 10px;
 }
 
-.filter-input {
+.price-range-slider {
   width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  background: #ddd;
+  outline: none;
+  border-radius: 2px;
+}
+
+.price-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #5D768B;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -7px;
+}
+
+.price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 15px;
+  justify-content: space-between;
+}
+
+.price-inputs input {
+  width: 80px;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-family: inherit;
-  box-sizing: border-box;
+  text-align: center;
+  letter-spacing: 2px;
+  font-weight: 300;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 14px;
+}
+
+/* Filter Columns */
+.filter-columns {
+  display: flex;
+  gap: 20px;
+}
+
+.filter-column {
+  flex: 1;
+}
+
+.filter-column h4 {
+  margin-bottom: 10px;
+  color: #555;
+}
+
+/* Beds Options */
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-option {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  letter-spacing: 1.5px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-weight: 300;
+}
+
+.filter-option:hover {
+  border-color: #5D768B;
+}
+
+.filter-option.active {
+  background: #5D768B;
+  color: white;
+  border-color: #5D768B;
+}
+
+/* Bath Controls */
+.bath-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.bath-controls button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bath-controls button:hover {
+  border-color: #5D768B;
+  color: #5D768B;
+}
+
+.bath-value {
+  min-width: 40px;
+  text-align: center;
+  font-weight: bold;
+  padding: 20px 30px;
+  font-size: 18px;
+}
+
+/* Size Slider */
+.size-controls {
+  margin: 30px 10px;
+}
+
+.size-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  background: #ddd;
+  outline: none;
+  border-radius: 2px;
+  margin-bottom: 10px;
+}
+
+.size-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #5D768B;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -7px;
+}
+
+.size-value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1.3px;
+  padding: 8px 0 0 0;
+}
+
+
+
+/* Price Range Slider */
+.price-slider-container {
+  margin-top: 15px;
+}
+
+.price-slider-wrapper {
+  position: relative;
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.price-slider {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  background: #ddd;
+  border-radius: 2px;
+  margin: 20px 0;
+}
+
+.slider-bar {
+  position: absolute;
+  height: 100%;
+  background: #ddd;
+  width: 100%;
+}
+
+.slider-track {
+  position: absolute;
+  height: 100%;
+  background: #5D768B;
+  left: 0%;
+  right: 0%;
+}
+
+.slider-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #5D768B;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  color: white;
+}
+
+.min-handle {
+  left: 0%;
+}
+
+.max-handle {
+  left: 100%;
+}
+
+.price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.price-inputs input {
+  width: 80px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-align: center;
+}
+
+/* Filter Columns */
+.filter-columns {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.filter-column {
+  width: 100%;
+}
+
+.filter-column h4 {
+  margin-bottom: 10px;
+  color: #555;
+}
+
+/* Beds Options */
+.filter-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.filter-option {
+  padding: 8px 5px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.filter-option:hover {
+  border-color: #5D768B;
+}
+
+.filter-option.active {
+  background: #5D768B;
+  color: white;
+  border-color: #5D768B;
+}
+
+/* Bath Controls */
+.bath-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.bath-controls button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bath-controls button:hover {
+  border-color: #5D768B;
+  color: #5D768B;
+}
+
+.bath-value {
+  min-width: 40px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Size Slider */
+.size-controls {
+  margin: 30px 0;
+}
+
+.size-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  background: #ddd;
+  outline: none;
+  border-radius: 2px;
+  margin-bottom: 10px;
+}
+
+.size-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #5D768B;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -7px;
+}
+
+.size-value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 14px;
+}
+
+/* Filter Actions */
+.filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .filter-button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 1rem;
-  background-color: #5D768B;
-  color: white;
-  border: none;
+  margin-top: 30px;
+  padding: 10px 18px;
   border-radius: 4px;
   cursor: pointer;
-  font-family: inherit;
-  font-weight: 500;
-  transition: background-color 0.3s;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  letter-spacing: 5px;
+  font-weight: 200;
+  transition: all 0.2s;
+  text-transform: uppercase;
 }
 
-.filter-button:hover {
-  background-color: #3F5A75;
+.filter-button.primary {
+  background: #5D768B;
+  color: white;
+  border: none;
 }
 
+.filter-button.primary:hover {
+  background: #4a6173;
+}
+
+.filter-button.secondary {
+  background: white;
+  color: #5D768B;
+  border: 1px solid #5D768B;
+}
+
+.filter-button.secondary:hover {
+  background: #f5f5f5;
+}
+
+/* Info Window */
 .gm-style .gm-style-iw-d {
   overflow: hidden !important;
 }
@@ -226,11 +590,12 @@ footer.footer {
 .info-window-content p{
   width: 100%;
   color: #FFF;
-  font-family: 'Jost', sans-serif;
-  font-size: 18px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
   margin: 0;
-  padding-top: 25px;
-  letter-spacing: 1.7px;
+  font-size: 16px;
+  padding-top: 12px;
+  letter-spacing: 1.2px;
+  font-weight: 100;
 }
 /* .info-window-title {
   font-size: 1.3rem;
@@ -260,7 +625,7 @@ footer.footer {
   
   .filters-panel {
     width: 100%;
-    position: static;
+    /* position: static; */
     margin-bottom: 1rem;
   }
   

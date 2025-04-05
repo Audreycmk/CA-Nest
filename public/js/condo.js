@@ -1,5 +1,7 @@
 let map;
 let originalApiResponse = null; // Store the original API response
+let priceRange = { min: 500, max: 5000 };
+let currentInfoWindow = null;
 
 async function initializeMap() {
   console.log("Initializing map...");
@@ -39,69 +41,277 @@ async function initializeMap() {
 }
 
 function createFilterControls() {
-  // Get the existing filters-panel div instead of creating a new one
   const filtersPanel = document.querySelector('.filters-panel');
-  
-  // Clear any existing content (like the empty h2)
   filtersPanel.innerHTML = '';
 
-  // Add your filter controls to the existing panel
   filtersPanel.innerHTML = `
     <h2>FILTER PROPERTIES</h2>
+    
+    <!-- Price Range Slider -->
     <div class="filter-section">
-      <label>Max Price: $</label>
-      <input type="number" id="maxPrice" placeholder="No limit" class="filter-input">
+      <h4>Rent</h4>
+      <div class="price-slider-container">
+        <div class="price-slider-wrapper">
+          <div class="price-slider">
+            <div class="slider-bar"></div>
+            <div class="slider-track"></div>
+            <div class="slider-handle min-handle" tabindex="0">-</div>
+            <div class="slider-handle max-handle" tabindex="0">+</div>
+          </div>
+        </div>
+        <div class="price-inputs">
+          <input type="number" id="minPrice" value="500" min="500" max="5000">
+          <span>to</span>
+          <input type="number" id="maxPrice" value="5000" min="500" max="5000">
+        </div>
+      </div>
     </div>
+    
+    <!-- Beds, Baths & Size Filter -->
     <div class="filter-section">
-      <label>Min Bedrooms:</label>
-      <input type="number" id="minBedrooms" min="0" placeholder="Any" class="filter-input">
+
+      <div class="filter-columns">
+        <!-- Beds Column -->
+        <div class="filter-column">
+          <h4>Beds</h4>
+          <div class="filter-options">
+            <button class="filter-option active" data-beds="any">Any</button>
+            <button class="filter-option" data-beds="0">Studio</button>
+            <button class="filter-option" data-beds="1">1BD</button>
+            <button class="filter-option" data-beds="1.5">1+1BD</button>
+            <button class="filter-option" data-beds="2">2BD</button>
+            <button class="filter-option" data-beds="2.5">2+1BD</button>
+            <button class="filter-option" data-beds="3">3BD+</button>
+          </div>
+        </div>
+        
+        <!-- Baths Column -->
+        <div class="filter-column">
+          <h4>Baths</h4>
+          <div class="bath-controls">
+            <button class="bath-minus">-</button>
+            <div class="bath-value">Any</div>
+            <button class="bath-plus">+</button>
+          </div>
+        </div>
+        
+        <!-- Size Column -->
+        <div class="filter-column">
+          <h4>Size (ft²)</h4>
+          <div class="size-controls">
+            <input type="range" id="sizeSlider" min="300" max="5000" value="300" class="size-slider">
+            <div class="size-value">
+              <span>Min:</span>
+              <span id="sizeValue">300</span>
+              <span>ft²</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="filter-section">
-      <label>Min Bathrooms:</label>
-      <input type="number" id="minBathrooms" min="0" step="0.5" placeholder="Any" class="filter-input">
+    
+    <div class="filter-actions">
+      <button id="cancelFilters" class="filter-button secondary">Cancel</button>
+      <button id="applyFilters" class="filter-button primary">Apply</button>
     </div>
-    <button id="applyFilters" class="filter-button">Apply Filters</button>
   `;
 
-  // Add event listener for the apply button
+  // Initialize price range slider (custom dual-handle)
+  const minPriceInput = document.getElementById('minPrice');
+  const maxPriceInput = document.getElementById('maxPrice');
+  const minHandle = document.querySelector('.min-handle');
+  const maxHandle = document.querySelector('.max-handle');
+  const sliderTrack = document.querySelector('.slider-track');
+ 
+
+  function updatePriceSlider() {
+    const minPercent = ((priceRange.min - 500) / (5000 - 500)) * 100;
+    const maxPercent = ((priceRange.max - 500) / (5000 - 500)) * 100;
+    
+    sliderTrack.style.left = `${minPercent}%`;
+    sliderTrack.style.right = `${100 - maxPercent}%`;
+    
+    minHandle.style.left = `${minPercent}%`;
+    maxHandle.style.left = `${maxPercent}%`;
+    
+    minPriceInput.value = priceRange.min;
+    maxPriceInput.value = priceRange.max;
+  }
+
+  function handleSliderMove(handle, isMin) {
+    return function(e) {
+      e.preventDefault();
+      const sliderRect = document.querySelector('.price-slider').getBoundingClientRect();
+      const sliderWidth = sliderRect.width;
+      let newX = e.clientX - sliderRect.left;
+      newX = Math.max(0, Math.min(newX, sliderWidth));
+      const percent = (newX / sliderWidth) * 100;
+      const value = Math.round(500 + (percent / 100) * (5000 - 500));
+      
+      if (isMin) {
+        if (value < priceRange.max - 100) {
+          priceRange.min = value;
+        }
+      } else {
+        if (value > priceRange.min + 100) {
+          priceRange.max = value;
+        }
+      }
+      
+      updatePriceSlider();
+    };
+  }
+
+  function handleSliderStart(handle, isMin) {
+    return function(e) {
+      e.preventDefault();
+      const moveHandler = handleSliderMove(handle, isMin);
+      const stopHandler = function() {
+        document.removeEventListener('mousemove', moveHandler);
+        document.removeEventListener('mouseup', stopHandler);
+      };
+      
+      document.addEventListener('mousemove', moveHandler);
+      document.addEventListener('mouseup', stopHandler);
+    };
+  }
+
+  minHandle.addEventListener('mousedown', handleSliderStart(minHandle, true));
+  maxHandle.addEventListener('mousedown', handleSliderStart(maxHandle, false));
+
+  minPriceInput.addEventListener('change', function() {
+    const value = parseInt(this.value);
+    if (!isNaN(value) && value >= 500 && value <= priceRange.max - 100) {
+      priceRange.min = value;
+      updatePriceSlider();
+    }
+  });
+
+  maxPriceInput.addEventListener('change', function() {
+    const value = parseInt(this.value);
+    if (!isNaN(value) && value <= 5000 && value >= priceRange.min + 100) {
+      priceRange.max = value;
+      updatePriceSlider();
+    }
+  });
+
+  updatePriceSlider();
+
+  // Initialize beds filter
+  document.querySelectorAll('[data-beds]').forEach(option => {
+    option.addEventListener('click', function() {
+      document.querySelector('[data-beds].active')?.classList.remove('active');
+      this.classList.add('active');
+    });
+  });
+
+  // Initialize bath controls
+  const bathValue = document.querySelector('.bath-value');
+  const bathOptions = ['Any', '1', '2', '3', '3+'];
+  let bathIndex = 0;
+
+  document.querySelector('.bath-plus').addEventListener('click', () => {
+    if (bathIndex < bathOptions.length - 1) {
+      bathIndex++;
+      bathValue.textContent = bathOptions[bathIndex];
+    }
+  });
+
+  document.querySelector('.bath-minus').addEventListener('click', () => {
+    if (bathIndex > 0) {
+      bathIndex--;
+      bathValue.textContent = bathOptions[bathIndex];
+    }
+  });
+
+  // Initialize size slider
+  const sizeSlider = document.getElementById('sizeSlider');
+  const sizeValue = document.getElementById('sizeValue');
+  sizeSlider.addEventListener('input', () => {
+    sizeValue.textContent = sizeSlider.value;
+  });
+
+  // Apply filters button - ensure markers show by default
   document.getElementById('applyFilters').addEventListener('click', async () => {
     await loadAndDisplayListings();
   });
+
+  // Cancel filters button - reset to defaults and show all markers
+  document.getElementById('cancelFilters').addEventListener('click', () => {
+    // Reset price
+    priceRange.min = 500;
+    priceRange.max = 5000;
+    updatePriceSlider();
+    
+    // Reset beds
+    document.querySelector('[data-beds].active')?.classList.remove('active');
+    document.querySelector('[data-beds="any"]').classList.add('active');
+    
+    // Reset baths
+    bathIndex = 0;
+    bathValue.textContent = 'Any';
+    
+    // Reset size
+    sizeSlider.value = 300;
+    sizeValue.textContent = '300';
+    
+    loadAndDisplayListings();
+  });
+
+  // Load listings immediately to show all markers by default
+  loadAndDisplayListings();
 }
 
 async function loadAndDisplayListings() {
-  const listings = await fetchCondoListings();
-  
-  // Log the complete original API response
-  console.log("Complete Zillow API Response:", originalApiResponse);
-  
-  // Apply filters
-  const filteredListings = applyFilters(listings);
-  console.log("Filtered listings:", filteredListings.length);
-  
-  // Clear existing markers
-  clearMarkers();
-  
-  // Display filtered listings
-  displayListings(filteredListings);
+  try {
+    const listings = await fetchCondoListings();
+    console.log("Complete Zillow API Response:", originalApiResponse);
+    
+    // Apply filters (will show all when defaults are set)
+    const filteredListings = applyFilters(listings);
+    console.log("Filtered listings:", filteredListings.length);
+    
+    // Clear existing markers
+    clearMarkers();
+    
+    // Display filtered listings
+    displayListings(filteredListings);
+  } catch (error) {
+    console.error("Error loading listings:", error);
+  }
 }
 
 function applyFilters(listings) {
-  const maxPrice = document.getElementById('maxPrice').value;
-  const minBedrooms = document.getElementById('minBedrooms').value;
-  const minBathrooms = document.getElementById('minBathrooms').value;
+  // Get price range
+  const minPrice = priceRange.min || 0;
+  const maxPrice = priceRange.max || Infinity;
+  
+  // Get beds
+  const bedsOption = document.querySelector('[data-beds].active');
+  const minBedrooms = bedsOption.dataset.beds === 'any' ? null : parseFloat(bedsOption.dataset.beds);
+  
+  // Get baths
+  const bathText = document.querySelector('.bath-value').textContent;
+  const minBathrooms = bathText === 'Any' ? null : parseFloat(bathText);
+  
+  // Get size
+  const minSize = parseInt(document.getElementById('sizeSlider').value) || 0;
   
   return listings.filter(listing => {
     // Price filter
-    if (maxPrice && listing.price > parseInt(maxPrice)) {
+    if (listing.price < minPrice || listing.price > maxPrice) {
       return false;
     }
     // Bedrooms filter
-    if (minBedrooms && listing.bedrooms < parseInt(minBedrooms)) {
+    if (minBedrooms !== null && (listing.bedrooms === undefined || listing.bedrooms < minBedrooms)) {
       return false;
     }
     // Bathrooms filter
-    if (minBathrooms && listing.bathrooms < parseFloat(minBathrooms)) {
+    if (minBathrooms !== null && (listing.bathrooms === undefined || listing.bathrooms < minBathrooms)) {
+      return false;
+    }
+    // Size filter
+    if (minSize > 300 && (listing.livingArea === undefined || listing.livingArea < minSize)) {
       return false;
     }
     return true;
@@ -133,8 +343,14 @@ function displayListings(listings) {
       const infoWindow = new google.maps.InfoWindow({ content: infoWindowContent });
 
       marker.addListener("click", () => {
+        // Close the previous info window if one exists
+        if (currentInfoWindow) {
+          currentInfoWindow.close();
+        }
+        // Open the new info window and store reference
         infoWindow.open(map, marker);
-      });
+        currentInfoWindow = infoWindow;
+      });;
     }
   });
 }
