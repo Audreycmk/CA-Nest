@@ -7,7 +7,7 @@ body {
   padding: 0;
   font-family: 'Segoe UI', system-ui, sans-serif;
   background: #f5e3d5;
-  min-height: 100vh;
+  height: 80vh;
   display: flex;
   overflow: hidden;
   flex-direction: column;
@@ -16,11 +16,13 @@ body {
 /* Header Styles */
 header.header {
   background: #5D768B;
-  padding: 1rem 2rem;
+  padding: 1rem 5rem;
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
   position: sticky;
   top: 0;
   z-index: 100;
+  display: flex;
+  justify-content: space-between;
 }
 
 header.header h1 {
@@ -60,7 +62,6 @@ footer.footer {
   text-align: center;
   padding: 1rem;
   background-color: #5D768B;
-  margin-top: 2rem;
   color: #F8EFE5;
   font-weight: 100;
   letter-spacing: 2px;
@@ -75,10 +76,11 @@ footer.footer {
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
+  justify-content: space-between;
 }
 
 /* Filters Panel */
-.filters-panel {
+/* .filters-panel {
   width: 300px;
   background: white;
   padding: 1.5rem;
@@ -88,6 +90,21 @@ footer.footer {
   height: 80%;
   position: sticky;
   top: 80px;
+} */
+
+.filters-panel {
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  width: 300px; /* Fixed width instead of percentages */
+  min-width: 250px;
+  max-height: calc(100vh - 200px); /* Always leaves 200px space at bottom */
+  overflow-y: auto; /* Adds scroll if content exceeds height */
+  transition: all 0.3s ease;
 }
 
 .filters-panel h2 {
@@ -115,8 +132,8 @@ h4 {
 }
 
 #map {
-  height: calc(95vh - 200px);
-  width: 100%;
+  height: 100%;
+  width: 90%;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
@@ -497,6 +514,29 @@ h4 {
   font-size: 14px;
 }
 
+/* Search Section */
+.search-section {
+  margin: 20px 0;
+}
+
+.search-input {
+    width: 90%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #5D768B;
+  box-shadow: 0 0 0 2px rgba(93, 118, 139, 0.2);
+}
+
 /* Filter Actions */
 .filter-actions {
   display: flex;
@@ -538,9 +578,9 @@ h4 {
 }
 
 /* Info Window */
-.gm-style .gm-style-iw-d {
+/* .gm-style .gm-style-iw-d {
   overflow: hidden !important;
-}
+} */
 
 .gm-style .gm-style-iw-c {
     width: 283px !important;
@@ -597,24 +637,6 @@ h4 {
   letter-spacing: 1.2px;
   font-weight: 100;
 }
-/* .info-window-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #5D768B; 
-  margin: 0 0 8px 0;
-  border-bottom: 1px solid #E0D7CC;
-  padding-bottom: 8px;
-} */
-
-
-/* .info-window-value {
-  color: #7A6B5D;
-}
-
-.info-window-divider {
-  border-top: 1px solid #E0D7CC;
-  margin: 12px 0;
-} */
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -624,10 +646,12 @@ h4 {
   }
   
   .filters-panel {
-    width: 100%;
-    /* position: static; */
-    margin-bottom: 1rem;
+    left: 20px;
+    right: 20px;
+    height: 70vh;
+    top: 10px;
   }
+
   
   #map {
     height: 70vh;

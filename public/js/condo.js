@@ -2,6 +2,7 @@ let map;
 let originalApiResponse = null; // Store the original API response
 let priceRange = { min: 500, max: 5000 };
 let currentInfoWindow = null;
+let searchBox; // For the Places search box
 
 async function initializeMap() {
   console.log("Initializing map...");
@@ -46,6 +47,16 @@ function createFilterControls() {
 
   filtersPanel.innerHTML = `
     <h2>FILTER PROPERTIES</h2>
+
+    <!-- Search Bar -->
+    <div class="search-section">
+      <input type="text" 
+             autocomplete="off" 
+             aria-autocomplete="list" 
+             class="search-input" 
+             placeholder="Search for locations..." 
+             id="propertySearch">
+    </div>
     
     <!-- Price Range Slider -->
     <div class="filter-section">
@@ -69,7 +80,6 @@ function createFilterControls() {
     
     <!-- Beds, Baths & Size Filter -->
     <div class="filter-section">
-
       <div class="filter-columns">
         <!-- Beds Column -->
         <div class="filter-column">
@@ -116,13 +126,15 @@ function createFilterControls() {
     </div>
   `;
 
+  // Initialize the search box
+  initSearchBox();
+
   // Initialize price range slider (custom dual-handle)
   const minPriceInput = document.getElementById('minPrice');
   const maxPriceInput = document.getElementById('maxPrice');
   const minHandle = document.querySelector('.min-handle');
   const maxHandle = document.querySelector('.max-handle');
   const sliderTrack = document.querySelector('.slider-track');
- 
 
   function updatePriceSlider() {
     const minPercent = ((priceRange.min - 500) / (5000 - 500)) * 100;
@@ -231,12 +243,12 @@ function createFilterControls() {
     sizeValue.textContent = sizeSlider.value;
   });
 
-  // Apply filters button - ensure markers show by default
+  // Apply filters button
   document.getElementById('applyFilters').addEventListener('click', async () => {
     await loadAndDisplayListings();
   });
 
-  // Cancel filters button - reset to defaults and show all markers
+  // Cancel filters button
   document.getElementById('cancelFilters').addEventListener('click', () => {
     // Reset price
     priceRange.min = 500;
@@ -260,6 +272,73 @@ function createFilterControls() {
 
   // Load listings immediately to show all markers by default
   loadAndDisplayListings();
+}
+
+function initSearchBox() {
+  const input = document.getElementById('propertySearch');
+  const searchBox = new google.maps.places.SearchBox(input);
+
+  // Bias search results to map's current viewport
+  map.addListener('bounds_changed', () => {
+    searchBox.setBounds(map.getBounds());
+  });
+
+  searchBox.addListener('places_changed', () => {
+    const places = searchBox.getPlaces();
+    
+    if (places.length === 0) return;
+
+    // Clear existing condo markers (optional - remove if you want to keep them)
+    clearMarkers();
+
+    // Create a marker for the searched location
+    places.forEach(place => {
+      if (!place.geometry) return;
+
+      new google.maps.Marker({
+        map,
+        position: place.geometry.location,
+        title: place.name
+      });
+
+      // Zoom to the searched location
+      if (place.geometry.viewport) {
+        map.fitBounds(place.geometry.viewport);
+      } else {
+        map.setCenter(place.geometry.location);
+        map.setZoom(15);
+      }
+    });
+
+    // Clear existing markers
+    clearMarkers();
+
+    // For each place, get the icon, name and location
+    const bounds = new google.maps.LatLngBounds();
+    places.forEach(place => {
+      if (!place.geometry) {
+        console.log("Returned place contains no geometry");
+        return;
+      }
+
+      // Create a marker for each place
+      const marker = new google.maps.Marker({
+        map,
+        title: place.name,
+        position: place.geometry.location,
+      });
+
+      markers.push(marker);
+
+      if (place.geometry.viewport) {
+        // Only geocodes have viewport
+        bounds.union(place.geometry.viewport);
+      } else {
+        bounds.extend(place.geometry.location);
+      }
+    });
+    map.fitBounds(bounds);
+  });
 }
 
 async function loadAndDisplayListings() {
@@ -350,7 +429,7 @@ function displayListings(listings) {
         // Open the new info window and store reference
         infoWindow.open(map, marker);
         currentInfoWindow = infoWindow;
-      });;
+      });
     }
   });
 }
@@ -371,10 +450,7 @@ function generateInfoWindowContent(listing) {
     ` : ''}
     ${listing.livingArea ? `<p class="info-window-content"><strong>Size:</strong> ${listing.livingArea} sqft</p>` : ''}
     ${listing.yearBuilt ? `<p class="info-window-content"><strong>Year Built:</strong> ${listing.yearBuilt}</p>` : ''}
-
   </div>
-</div>
-
   `;
 }
 
@@ -401,7 +477,6 @@ async function fetchCondoListings() {
       latitude: item.latitude,
       longitude: item.longitude,
       addressStreet: item.streetAddress || item.addressStreet || "No address",
-      // buildingName: item.buildingName,
       
       // Pricing
       price: item.price,
